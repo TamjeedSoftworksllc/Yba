@@ -1,0 +1,2 @@
+getgenv().Webhook = ""
+loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/Main"))()
