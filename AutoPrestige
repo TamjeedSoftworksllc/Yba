@@ -34,8 +34,44 @@ local RemoteFunction, RemoteEvent = Character.RemoteFunction, Character.RemoteEv
 local HRP = Character.PrimaryPart
 local part
 local dontTPOnDeath = true
+function SendWebhook(msg, title)
+	local webhookcheck = (identifyexecutor and identifyexecutor() or "Unsupported exploit")
 
-if LocalPlayer.PlayerStats.Level.Value == 50 then while true do print("Level 50, Auto pres disabled") task.wait(9999999) end end
+	local url = getgenv().Webhook
+
+	local data;
+	data = {
+		["embeds"] = {
+			{
+				["title"] = title,
+				["description"] = msg,
+				["type"] = "rich",
+				["color"] = tonumber(0x7269ff),
+			}
+		}
+	}
+
+	repeat task.wait() until data
+	local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+
+	local headers = {
+		["Content-Type"] = "application/json"
+	}
+	local request = http_request or request or HttpPost or syn.request or http.request
+	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+	request(abcdef)
+end
+SendWebhook("Auto Prestige enabled", "YBA Auto Prestige")
+
+if LocalPlayer.PlayerStats.Level.Value == 50 then
+	while true do
+		print("Level 50, Auto prestige disabled")
+		SendWebhook(LocalPlayer.Name .. " is already Level 50", "YBA Auto Prestige")
+		task.wait(9999999)
+	end
+end
+
 
 if not LocalPlayer.PlayerGui:FindFirstChild("HUD") then
 	print("I FOUND IT")
@@ -105,34 +141,7 @@ local PlaceID = game.PlaceId
 local AllIDs = {}
 local foundAnything = ""
 local actualHour = os.date("!*t").hour
-function SendWebhook(msg, title)
-	local webhookcheck = (identifyexecutor and identifyexecutor() or "Unsupported exploit")
 
-	local url = getgenv().Webhook
-
-	local data;
-	data = {
-		["embeds"] = {
-			{
-				["title"] = title,
-				["description"] = msg,
-				["type"] = "rich",
-				["color"] = tonumber(0x7269ff),
-			}
-		}
-	}
-
-	repeat task.wait() until data
-	local newdata = game:GetService("HttpService"):JSONEncode(data)
-
-
-	local headers = {
-		["Content-Type"] = "application/json"
-	}
-	local request = http_request or request or HttpPost or syn.request or http.request
-	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
-	request(abcdef)
-end
 local HttpService = game:GetService("HttpService")
 
 local function getGameName(placeId)
@@ -191,7 +200,9 @@ local function TPReturner()
 				pcall(function()
 					writefile("XenonAutoPres3ServerBlocker.json", game:GetService('HttpService'):JSONEncode(AllIDs))
 					task.wait()
-					SendWebhook(LocalPlayer.Name .." teleported to" .. ID .. "Using" .. (identifyexecutor and identifyexecutor() or "Unsupported exploit"), getGameName(game.PlaceId) .. " Auto Prestige 3 Teleport","Exploit: " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit"))
+					SendWebhook(
+						LocalPlayer.Name .. " teleported to " .. ID .. " Using " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit")
+				    )
 					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
 				end)
 				task.wait(4)
@@ -207,7 +218,10 @@ local function Teleport()
 				game:GetService("TeleportService"):Teleport(2809202155, game:GetService("Players").LocalPlayer)
 
 				game:GetService("TeleportService").TeleportInitFailed:Connect(function()
-					SendWebhook(LocalPlayer.Name .. "Teleported to " .. getGameName(game.PlaceId),getGameName(game.PlaceId) .. "Teleport Attempt using Exploit" ..  (identifyexecutor and identifyexecutor() or "Unsupported exploit"))
+					SendWebhook(
+						LocalPlayer.Name .. " Teleported to " .. getGameName(game.PlaceId),
+						getGameName(game.PlaceId) .. " Teleport Attempt using Exploit " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit")
+					)
 					game:GetService("TeleportService"):Teleport(2809202155, game:GetService("Players").LocalPlayer)
 				end)
 
@@ -316,7 +330,10 @@ local function attemptStandFarm()
 			print("DEBUG CHECK, USING ROKAKAKA")
 			useItem("Rokakaka", "II")
 		elseif getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] then
-			SendWebhook(getGameName(game.PlaceId) .. "You got " .. LocalPlayer.PlayerStats.Stand.Value,"You got the Stand: " ..  LocalPlayer.PlayerStats.Stand.Value)
+			SendWebhook(
+				getGameName(game.PlaceId) .. " You got " .. LocalPlayer.PlayerStats.Stand.Value,
+				"You got the Stand: " .. LocalPlayer.PlayerStats.Stand.Value
+			)
 			dontTPOnDeath = true
 			Teleport()
 		end
@@ -324,7 +341,11 @@ local function attemptStandFarm()
 		-- If the player already has a stand, check if it's valid
 	elseif LocalPlayer.PlayerStats and LocalPlayer.PlayerStats.Stand and LocalPlayer.PlayerStats.Stand.Value ~= "None" then
 		if not getgenv().standList or not getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] then
-			SendWebhook(getGameName(game.PlaceId) "Rokaing Stand" ..  LocalPlayer.PlayerStats.Stand.Value, getGameName(game.PlaceId) .. "Roka Attempt")
+			SendWebhook(
+				getGameName(game.PlaceId) .. " Rokaing Stand " .. LocalPlayer.PlayerStats.Stand.Value,
+				getGameName(game.PlaceId) .. " Roka Attempt"
+			)
+
 			print("DEBUG CHECK, USING ROKAKAKA TO CLEAR STAND")
 			useItem("Rokakaka", "II")
 		end
@@ -829,7 +850,11 @@ end
 task.spawn(function()
 	while task.wait(3) do
 		if checkPrestige(LocalPlayer.PlayerStats.Level.Value, LocalPlayer.PlayerStats.Prestige.Value) then
-			SendWebhook(getGameName(game.PlaceId).. LocalPlayer.Name .. "Prestiged",getGameName(game.PlaceId) .. "Prestige Attempt")
+			SendWebhook(
+				getGameName(game.PlaceId) .. " " .. LocalPlayer.Name .. " Prestiged",
+				getGameName(game.PlaceId) .. " Prestige Attempt"
+			)
+
 			print("Prestiged")
 			Teleport()
 		elseif LocalPlayer.PlayerStats.Level.Value == 50 then
