@@ -34,40 +34,106 @@ local RemoteFunction, RemoteEvent = Character.RemoteFunction, Character.RemoteEv
 local HRP = Character.PrimaryPart
 local part
 local dontTPOnDeath = true
-function SendWebhook(msg, title)
-	local webhookcheck = (identifyexecutor and identifyexecutor() or "Unsupported exploit")
+Webhook = {}
+
+function Webhook:Send(args)
+	local https = game:GetService("HttpService")
+
+	local colors = {
+		red = 16711680,
+		green = 65280,
+		blue = 255,
+		black = 0,
+		yellow = 16514837
+	}
+
+	local requestFunc = syn and syn.request or http_request or request or HttpPost or http and http.request
+	if not requestFunc then
+		warn("No compatible HTTP request function found.")
+		return
+	end
 
 	local url = getgenv().Webhook
+	if not url then
+		warn("No webhook URL provided.")
+		return
+	end
 
-	local data;
-	data = {
-		["embeds"] = {
-			{
-				["title"] = title,
-				["description"] = msg,
-				["type"] = "rich",
-				["color"] = tonumber(0x7269ff),
-			}
-		}
+	local finalUrl = string.gsub(url, "discord.com", "webhook.lewisakura.moe")
+	local backupUrl = string.gsub(url, "discord.com", "webhook.newstargeted.com")
+
+	local payload = {
+		content = args.Content or "",
+		embeds = {{
+			title = args.Title and ("**" .. args.Title .. "**") or nil,
+			description = (args.Description or "") .. "\n\nExploit = " .. (identifyexecutor and identifyexecutor() or "Unknown Exploit"),
+			type = "rich",
+			color = args.Color or colors.black,
+			fields = args.Fields or nil,
+			image = { url = args.Image or "" },
+			thumbnail = { url = args.Thumbnail or "" },
+			timestamp = args.TimeStamp or "",
+			footer = {
+				text = args.Footer or "",
+				icon_url = args.FooterIcon or ""
+			},
+			author = args.Author and {
+				name = args.Author,
+				icon_url = args.AuthorUrl or "",
+				url = args.AuthorLink or ""
+			} or nil
+		}}
 	}
 
-	repeat task.wait() until data
-	local newdata = game:GetService("HttpService"):JSONEncode(data)
+	local jsonData = https:JSONEncode(payload)
+	local headers = { ["Content-Type"] = "application/json" }
 
+	local success, err = pcall(function()
+		requestFunc({
+			Url = finalUrl,
+			Method = "POST",
+			Headers = headers,
+			Body = jsonData
+		})
+	end)
 
-	local headers = {
-		["Content-Type"] = "application/json"
-	}
-	local request = http_request or request or HttpPost or syn.request or http.request
-	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
-	request(abcdef)
+	if not success then
+		warn("Primary webhook failed: " .. tostring(err) .. " | Trying backup URL...")
+		pcall(function()
+			requestFunc({
+				Url = backupUrl,
+				Method = "POST",
+				Headers = headers,
+				Body = jsonData
+			})
+		end)
+	end
 end
-SendWebhook("Auto Prestige enabled",tostring(game.Players.LocalPlayer)  ..  " Activated YBA Auto Prestige")
+
+Webhook:Send({
+	Title = "YBA Auto Prestige",
+	Description = LocalPlayer.Name ..  "Started YBA Auto Prestige",
+	Color = 65280,
+	Content = "Auto Prestige",
+	Footer = "Azmi Sucks",
+	TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+	Author = "Yogurt",
+	AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+})
+
 
 if LocalPlayer.PlayerStats.Level.Value == 50 then
 	while true do
 		print("Level 50, Auto prestige disabled")
-		SendWebhook(LocalPlayer.Name .. " is already Level 50", "YBA Auto Prestige")
+		Webhook:Send({
+			Title = "YBA Auto Prestige",
+			Description = LocalPlayer.Name .. " Is Already at level 50",
+			Color = 65280,
+			TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+			Author = "YBA Auto Prestige",  -- Added this line for author name
+			AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+		})
+
 		task.wait(9999999)
 	end
 end
@@ -200,9 +266,14 @@ local function TPReturner()
 				pcall(function()
 					writefile("XenonAutoPres3ServerBlocker.json", game:GetService('HttpService'):JSONEncode(AllIDs))
 					task.wait()
-					SendWebhook(
-						LocalPlayer.Name .. " teleported to " .. ID .. " Using " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit")
-				    )
+					Webhook:Send({
+						Title = "YBA Auto Prestige",
+						Description = LocalPlayer.Name .. " teleported to " .. ID .. " Using " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit"),
+						Color = 65280,
+						TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+						Author = "YBA Auto Prestige",
+						AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+					})
 					game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
 				end)
 				task.wait(4)
@@ -218,10 +289,14 @@ local function Teleport()
 				game:GetService("TeleportService"):Teleport(2809202155, game:GetService("Players").LocalPlayer)
 
 				game:GetService("TeleportService").TeleportInitFailed:Connect(function()
-					SendWebhook(
-						LocalPlayer.Name .. " Teleported to " .. getGameName(game.PlaceId),
-						getGameName(game.PlaceId) .. " Teleport Attempt using Exploit " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit")
-					)
+					Webhook:Send({
+						Title = "YBA Auto Prestige",
+						Description = "YBA Teleport Attempt using Exploit " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit"),
+						Color = 65280,
+						TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+						Author = "YBA Auto Prestige",
+						AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+					})
 					game:GetService("TeleportService"):Teleport(2809202155, game:GetService("Players").LocalPlayer)
 				end)
 
@@ -330,10 +405,15 @@ local function attemptStandFarm()
 			print("DEBUG CHECK, USING ROKAKAKA")
 			useItem("Rokakaka", "II")
 		elseif getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] then
-			SendWebhook(
-				getGameName(game.PlaceId) .. " You got " .. LocalPlayer.PlayerStats.Stand.Value,
-				"You got the Stand: " .. LocalPlayer.PlayerStats.Stand.Value
-			)
+			Webhook:Send({
+				Title = "YBA Auto Prestige You got" .. LocalPlayer.PlayerStats.Stand.Value,
+				Description = "You got the Stand: " .. LocalPlayer.PlayerStats.Stand.Value,
+				Color = 65280,
+				TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+				Author = "YBA Auto Prestige",  -- author name is required to show author block
+				AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+			})
+
 			dontTPOnDeath = true
 			Teleport()
 		end
@@ -341,11 +421,16 @@ local function attemptStandFarm()
 		-- If the player already has a stand, check if it's valid
 	elseif LocalPlayer.PlayerStats and LocalPlayer.PlayerStats.Stand and LocalPlayer.PlayerStats.Stand.Value ~= "None" then
 		if not getgenv().standList or not getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] then
-			SendWebhook(
-				getGameName(game.PlaceId) .. " Rokaing Stand " .. LocalPlayer.PlayerStats.Stand.Value,
-				getGameName(game.PlaceId) .. " Roka Attempt"
-			)
 
+			Webhook:Send({
+				Title = "YBA Auto Prestige Roka Attempt",
+				Description = "Rokaing Stand " .. LocalPlayer.PlayerStats.Stand.Value,
+				Color = 65280,
+				TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+				Author = "YBA Auto Prestige",  -- Added author name here
+				AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+			})
+			
 			print("DEBUG CHECK, USING ROKAKAKA TO CLEAR STAND")
 			useItem("Rokakaka", "II")
 		end
@@ -850,10 +935,14 @@ end
 task.spawn(function()
 	while task.wait(3) do
 		if checkPrestige(LocalPlayer.PlayerStats.Level.Value, LocalPlayer.PlayerStats.Prestige.Value) then
-			SendWebhook(
-				getGameName(game.PlaceId) .. " " .. LocalPlayer.Name .. " Prestiged",
-				getGameName(game.PlaceId) .. " Prestige Attempt"
-			)
+			Webhook:Send({
+				Title = "YBA Auto Prestige Prestige Attempt",
+				Description = "@everyone " .. LocalPlayer.Name .. " Prestiged",
+				Color = 65280,
+				TimeStamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+				Author = "YBA Auto Prestige",  -- author name is required to show author block
+				AuthorUrl = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
+			})
 
 			print("Prestiged")
 			Teleport()
