@@ -62,7 +62,7 @@ function SendWebhook(msg, title)
 	local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
 	request(abcdef)
 end
-SendWebhook("Auto Prestige enabled",Player.Name  ..  " Activated YBA Auto Prestige")
+SendWebhook("Auto Prestige enabled",tostring(game.Players.LocalPlayer)  ..  " Activated YBA Auto Prestige")
 
 if LocalPlayer.PlayerStats.Level.Value == 50 then
 	while true do
