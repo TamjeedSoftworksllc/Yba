@@ -1,138 +1,123 @@
---//CREATED BY SNAWRK (LuaScape on YouTube)
---//Proxies by master3395 and lewistehminerz
-
-local wsv4 = { 
-	
-	colors = {
-	
-	['red'] = tonumber(16711680),
-	['green'] = tonumber(65280),
-	['blue'] = tonumber(255),
-	['black'] = tonumber(0),
-	['yellow'] = tonumber(16514837)
-		
-	},
-}
-
 local https = game:GetService("HttpService")
 
-wsv4.__index = wsv4
+local colors = {
+	red = 16711680,
+	green = 65280,
+	blue = 255,
+	black = 0,
+	yellow = 16514837,
+}
 
-function wsv4.new(...)
-	local self = {}
-	setmetatable(self, wsv4)
-
-	local args = table.unpack({...})
-	self.Title = args.Title or 'No Title Provided'
-	self.Description = args.Description or ''
-	self.Content = args.Content or ''
-	self.Fields = args.Fields or nil
-	self.Thumbnail = args.Thumbnail or ''
-	self.Image = args.Image or ''
-	self.Footer = args.Footer or ''
-	self.FooterIcon = args.FooterIcon or ''
-	self.TimeStamp = args.TimeStamp or ''
-	self.Color = self.Color or wsv4.colors.black
-	
-	self.Author = args.Author or ''
-	self.AuthorUrl = args.AuthorUrl or ''
-	self.AuthorLink = args.AuthorLink or ''
-	return self
-end
-
-
-local function postWebhook(url, data)
-	local req = syn and syn.request
-		or http_request
-		or request
-		or HttpPost
-		or (http and http.request)
-
-	if not req then
-		warn("No HTTP request function found in this executor.")
-		return
+local function exploitRequest(url, method, body)
+	local reqFunc = nil
+	if syn and syn.request then
+		reqFunc = syn.request
+	elseif http and http.request then
+		reqFunc = http.request
+	elseif request then
+		reqFunc = request
 	end
 
+	if reqFunc then
+		local success, response = pcall(function()
+			return reqFunc({
+				Url = url,
+				Method = method or "POST",
+				Body = body,
+				Headers = {
+					["Content-Type"] = "application/json"
+				}
+			})
+		end)
+		if success then
+			return response
+		else
+			error("Request failed: "..tostring(response))
+		end
+	else
+		error("No exploit HTTP request function found!")
+	end
+end
+
+local function postWebhook(url, data)
+	local finalUrl = string.gsub(url, "discord.com", "webhook.lewisakura.moe")
+	local finalBackupUrl = string.gsub(url, "discord.com", "webhook.newstargeted.com")
+
 	local success, err = pcall(function()
-		req({
-			Url     = url,
-			Method  = "POST",
-			Headers = { ["Content-Type"] = "application/json" },
-			Body    = data
-		})
+		exploitRequest(finalUrl, "POST", data)
 	end)
 
 	if not success then
-		warn("Webhook failed: " .. tostring(err))
+		warn("Error: "..tostring(err).." Trying backup URL")
+		local backupSuccess, backupErr = pcall(function()
+			exploitRequest(finalBackupUrl, "POST", data)
+		end)
+		if backupSuccess then
+			print("Backup request success")
+		else
+			warn("Backup request failed "..tostring(backupErr).." bad request or both proxy down")
+		end
 	end
 end
 
-function wsv4:sendMessage(url)
-	
+local function sendMessage(url, messageData)
 	local data = {
-		['content'] = self.Content
+		content = messageData.Content or ""
 	}
-	
 	local finalData = https:JSONEncode(data)
-	
 	postWebhook(url, finalData)
 end
 
-function wsv4:sendAuthorEmbed(url)
-	
+local function sendAuthorEmbed(url, embedData)
 	local data = {
-		['content'] = self.Content,
-		["embeds"] = {{
-			["author"] = {
-				["name"] = self.Author,
-				["icon_url"] = self.AuthorUrl,
-				['url'] = self.AuthorLink
+		content = embedData.Content or "",
+		embeds = {{
+			author = {
+				name = embedData.Author or "",
+				icon_url = embedData.AuthorUrl or "",
+				url = embedData.AuthorLink or "",
 			},
-			
-			["description"] = self.Description,
-			["color"] = self.Color,
-			["fields"] = self.Fields,
-			["image"] = {["url"] = self.Image},
-			['thumbnail'] = {["url"] = self.Thumbnail},
-			['timestamp'] = self.TimeStamp,
-			['footer'] = {
-				['text'] = self.Footer,
-				['icon_url'] = self.FooterIcon
-			},
-
+			description = embedData.Description or "",
+			color = embedData.Color or colors.black,
+			fields = embedData.Fields,
+			image = { url = embedData.Image or "" },
+			thumbnail = { url = embedData.Thumbnail or "" },
+			timestamp = embedData.TimeStamp or "",
+			footer = {
+				text = embedData.Footer or "",
+				icon_url = embedData.FooterIcon or "",
+			}
 		}},
 	}
-	
 	local finalData = https:JSONEncode(data)
-	
 	postWebhook(url, finalData)
-	
 end
 
-function wsv4:sendEmbed(url)
-	
+local function sendEmbed(url, embedData)
 	local data = {
-		['content'] = self.Content,
-		['embeds'] = {{
-			["image"] = {["url"] = self.Image},
-			['thumbnail'] = {["url"] = self.Thumbnail},
-			['title'] = "**"..self.Title.."**",
-			['description'] = self.Description,
-			['type'] = "rich",
-			["color"] = self.Color,
-			['fields'] = self.Fields,
-			['timestamp'] = self.TimeStamp,
-			['footer'] = {
-				['text'] = self.Footer,
-				['icon_url'] = self.FooterIcon
+		content = embedData.Content or "",
+		embeds = {{
+			image = { url = embedData.Image or "" },
+			thumbnail = { url = embedData.Thumbnail or "" },
+			title = "**"..(embedData.Title or "No Title Provided").."**",
+			description = embedData.Description or "",
+			type = "rich",
+			color = embedData.Color or colors.black,
+			fields = embedData.Fields,
+			timestamp = embedData.TimeStamp or "",
+			footer = {
+				text = embedData.Footer or "",
+				icon_url = embedData.FooterIcon or "",
 			},
-		  },
-		},
+		}},
 	}
 	local finalData = https:JSONEncode(data)
-	
 	postWebhook(url, finalData)
-	
 end
 
-return wsv4
+return {
+	colors = colors,
+	sendMessage = sendMessage,
+	sendAuthorEmbed = sendAuthorEmbed,
+	sendEmbed = sendEmbed,
+}
