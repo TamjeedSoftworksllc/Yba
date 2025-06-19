@@ -34,7 +34,7 @@ local RemoteFunction, RemoteEvent = Character.RemoteFunction, Character.RemoteEv
 local HRP = Character.PrimaryPart
 local part
 local dontTPOnDeath = true
-local WebhookMod = 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/Webhook%20Module"))()
+local WebhookMod = 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/Webhook%20Module"))
 function SendWebhook(Info)
 	local Webhook = WebhookMod.new()
 	Webhook.Title = Info.Title or "YBA Auto Prestige"
