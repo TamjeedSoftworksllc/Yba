@@ -34,44 +34,43 @@ local RemoteFunction, RemoteEvent = Character.RemoteFunction, Character.RemoteEv
 local HRP = Character.PrimaryPart
 local part
 local dontTPOnDeath = true
-local ws = loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/WebhookModule"))()
-local url = getgenv().Webhook
 
-local function SendWebhook(player, Info)
-	local req = ws:new()
-	local placeName = game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name
+local WebhookMod = 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/WebhookModule"))()
 
-	req.Title = Info.Title or "YBA Auto Prestige"
-	req.Description = Info.Description or "reality your stupid"
-	req.Thumbnail = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624"
-	req.Color = ws.colors.black
-	req.Footer = "Developed by TamjeedSoftworksLLC"
-
-	req.Fields = {
-		{
-			['name'] = "Player's Name:",
-			['value'] = "```" .. player.Name .. "```",
-			['inline'] = true
-		},
-		{
-			['name'] = "Player's UserId /",
-			['value'] = "```" .. player.UserId .. "```",
-			['inline'] = true
-		},
-		{
-			['name'] = "Executor: ",
-			['value'] = "```" .. (identifyexecutor and identifyexecutor() or "Unsupported Exploit") .. "```",
-			['inline'] = true
-		},
-		{
-			['name'] = "Player's Profile:",
-			['value'] = "https://roblox.com/users/" .. player.UserId .. "/profile/",
-			['inline'] = true
-		},
+function SendWebhook(Info)
+	local embedData = {
+		Title = Info.Title or "YBA Auto Prestige",
+		Description = Info.Description or "reality your stupid",
+		Thumbnail = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624",
+		Color = WebhookMod.colors.black,
+		Footer = "Developed by TamjeedSoftworksLLC",
+		Fields = {
+			{
+				name = "Player's Name:",
+				value = "```"..tostring(LocalPlayer.Name).."```",
+				inline = true
+			},
+			{
+				name = "Player's UserId /",
+				value = "```"..tostring(LocalPlayer.UserId).."```",
+				inline = true
+			},
+			{
+				name = "Exploit: ",
+				value = "```"..tostring( (identifyexecutor and identifyexecutor()) or "Unsupported Exploit" ).."```",
+				inline = true
+			},
+			{
+				name = "Player's Profile:",
+				value = "https://roblox.com/users/"..tostring(LocalPlayer.UserId).."/profile/",
+				inline = true
+			},
+		}
 	}
 
-	req:sendEmbed(url)
+	WebhookMod.sendEmbed(getgenv().Webhook, embedData)
 end
+
 SendWebhook({
 	Description = LocalPlayer.Name .. " Started YBA Autofarm"
 })
