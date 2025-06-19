@@ -42,29 +42,28 @@ end
 
 
 local function postWebhook(url, data)
-	
-	local finalUrl = string.gsub(url, "discord.com", "webhook.lewisakura.moe")
-	local finalBackupUrl = string.gsub(url, "discord.com", "webhook.newstargeted.com")
-	
-	local good, bad = pcall(function()
-		https:PostAsync(finalUrl, data)
+	local req = syn and syn.request
+		or http_request
+		or request
+		or HttpPost
+		or (http and http.request)
+
+	if not req then
+		warn("No HTTP request function found in this executor.")
+		return
+	end
+
+	local success, err = pcall(function()
+		req({
+			Url     = url,
+			Method  = "POST",
+			Headers = { ["Content-Type"] = "application/json" },
+			Body    = data
+		})
 	end)
-	
-	if good then
-		warn('')
-	else
-		warn("f" .. bad .. " Trying backup URL")
-		
-		local goodbackup, badbackup = pcall(function()
-			https:PostAsync(finalBackupUrl, data)
-		end)
-		
-		if goodbackup then
-			print("Backup request success")
-		else
-			warn("Backup request failed " .. badbackup .. " bad request or both proxy down")
-		end
-		
+
+	if not success then
+		warn("Webhook failed: " .. tostring(err))
 	end
 end
 
