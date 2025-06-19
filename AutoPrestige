@@ -38,6 +38,7 @@ local dontTPOnDeath = true
 local WebhookMod = 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/WebhookModule"))()
 
 function SendWebhook(Info)
+if getgenv().Webhook then
 	local embedData = {
 		Title = Info.Title or "YBA Auto Prestige",
 		Description = Info.Description or "reality your stupid",
@@ -70,6 +71,10 @@ function SendWebhook(Info)
 
 	WebhookMod.sendEmbed(getgenv().Webhook, embedData)
 end
+else
+print("No webhook")
+end
+
 
 SendWebhook({
 	Description = LocalPlayer.Name .. " Started YBA Autofarm"
