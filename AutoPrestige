@@ -33,7 +33,7 @@ repeat task.wait() until Character:FindFirstChild("RemoteEvent") and Character:F
 local RemoteFunction, RemoteEvent = Character.RemoteFunction, Character.RemoteEvent
 local HRP = Character.PrimaryPart
 local part
-local dontTPOnDeath = true
+local getgenv().dontTPOnDeath = true
 
 local WebhookMod = 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/WebhookModule"))()
 
@@ -366,7 +366,6 @@ local function attemptStandFarm()
 				Description = "You got the Stand: " .. LocalPlayer.PlayerStats.Stand.Value,
 			})
 
-			dontTPOnDeath = true
 			Teleport()
 		end
 
@@ -735,7 +734,7 @@ local function autoStory()
 			autoStory()
 		end
 
-	elseif not getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] and LocalPlayer.PlayerStats.Level.Value >= 3 and dontTPOnDeath then
+	elseif not getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] and LocalPlayer.PlayerStats.Level.Value >= 3 and getgenv().dontTPOnDeath then
 		print('NO STAND?')
 		task.wait(5)
 
@@ -746,7 +745,7 @@ local function autoStory()
 		if countItems("Mysterious Arrow") >= 25 and countItems("Mysterious Arrow") >= 25 then
 			print("MAX ARROW AND ROKA, GOT")
 			print("ATTEMPTING TO STAND FARM")
-			dontTPOnDeath = false
+			dontTPOnDeath = true
 			attemptStandFarm()
 		else
 			Teleport()
@@ -906,7 +905,7 @@ game.Workspace.Living.ChildAdded:Connect(function(character)
 		if LocalPlayer.PlayerStats.Level.Value == 50 then
 			print("didnt reconnect")
 		else
-			if dontTPOnDeath then
+			if getgenv().dontTPOnDeath then
 				Teleport()
 			else
 				attemptStandFarm()
