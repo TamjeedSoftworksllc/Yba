@@ -12,7 +12,6 @@ getgenv().lessPing = false --turn this on if u want lower ping servers, cant gua
 getgenv().autoRequiem = true --turn this on for auto requiem
 getgenv().NPCTimeOut = 15 --timeout for npc not spawning
 getgenv().HamonCharge = 90 --change if u want to charge hamon after every kill (around 90)
-getgenv().webhook = "" --change this if u want to use ur own webhook
 
 game:GetService("CoreGui").DescendantAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" then
