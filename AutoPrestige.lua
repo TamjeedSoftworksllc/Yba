@@ -33,46 +33,46 @@ repeat task.wait() until Character:FindFirstChild("RemoteEvent") and Character:F
 local RemoteFunction, RemoteEvent = Character.RemoteFunction, Character.RemoteEvent
 local HRP = Character.PrimaryPart
 local part
-local getgenv().dontTPOnDeath = true
+local dontTPOnDeath = true
 
 local WebhookMod = 	loadstring(game:HttpGet("https://raw.githubusercontent.com/TamjeedSoftworksllc/Yba/refs/heads/main/WebhookModule"))()
 
 function SendWebhook(Info)
-if getgenv().Webhook then
-	local embedData = {
-		Title = Info.Title or "YBA Auto Prestige",
-		Description = Info.Description or "reality your stupid",
-		Thumbnail = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624",
-		Color = WebhookMod.colors.black,
-		Footer = "Developed by TamjeedSoftworksLLC",
-		Fields = {
-			{
-				name = "Player's Name:",
-				value = "```"..tostring(LocalPlayer.Name).."```",
-				inline = true
-			},
-			{
-				name = "Player's UserId /",
-				value = "```"..tostring(LocalPlayer.UserId).."```",
-				inline = true
-			},
-			{
-				name = "Exploit: ",
-				value = "```"..tostring( (identifyexecutor and identifyexecutor()) or "Unsupported Exploit" ).."```",
-				inline = true
-			},
-			{
-				name = "Player's Profile:",
-				value = "https://roblox.com/users/"..tostring(LocalPlayer.UserId).."/profile/",
-				inline = true
-			},
+	if getgenv().Webhook then
+		local embedData = {
+			Title = Info.Title or "YBA Auto Prestige",
+			Description = Info.Description or "reality your stupid",
+			Thumbnail = "https://media.discordapp.net/attachments/1157046525663399946/1383774038005907467/image.png?ex=6853f7ff&is=6852a67f&hm=d41eb661c6545bae2a36fbe944c27daf527b37f3b66cdf59dc385efac39fe6a5&=&format=webp&quality=lossless&width=596&height=624",
+			Color = WebhookMod.colors.black,
+			Footer = "Developed by TamjeedSoftworksLLC",
+			Fields = {
+				{
+					name = "Player's Name:",
+					value = "```"..tostring(LocalPlayer.Name).."```",
+					inline = true
+				},
+				{
+					name = "Player's UserId /",
+					value = "```"..tostring(LocalPlayer.UserId).."```",
+					inline = true
+				},
+				{
+					name = "Exploit: ",
+					value = "```"..tostring( (identifyexecutor and identifyexecutor()) or "Unsupported Exploit" ).."```",
+					inline = true
+				},
+				{
+					name = "Player's Profile:",
+					value = "https://roblox.com/users/"..tostring(LocalPlayer.UserId).."/profile/",
+					inline = true
+				},
+			}
 		}
-	}
 
-	WebhookMod.sendEmbed(getgenv().Webhook, embedData)
-end
-else
-print("No webhook")
+		WebhookMod.sendEmbed(getgenv().Webhook, embedData)
+	else
+		print("No webhook")
+	end
 end
 
 
@@ -366,6 +366,7 @@ local function attemptStandFarm()
 				Description = "You got the Stand: " .. LocalPlayer.PlayerStats.Stand.Value,
 			})
 
+			dontTPOnDeath = true
 			Teleport()
 		end
 
@@ -377,7 +378,7 @@ local function attemptStandFarm()
 				Title = "YBA Auto Prestige Roka Attempt",
 				Description = "Rokaing Stand " .. LocalPlayer.PlayerStats.Stand.Value,
 			})
-			
+
 			print("DEBUG CHECK, USING ROKAKAKA TO CLEAR STAND")
 			useItem("Rokakaka", "II")
 		end
@@ -734,7 +735,7 @@ local function autoStory()
 			autoStory()
 		end
 
-	elseif not getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] and LocalPlayer.PlayerStats.Level.Value >= 3 and getgenv().dontTPOnDeath then
+	elseif not getgenv().standList[LocalPlayer.PlayerStats.Stand.Value] and LocalPlayer.PlayerStats.Level.Value >= 3 and dontTPOnDeath then
 		print('NO STAND?')
 		task.wait(5)
 
@@ -745,7 +746,7 @@ local function autoStory()
 		if countItems("Mysterious Arrow") >= 25 and countItems("Mysterious Arrow") >= 25 then
 			print("MAX ARROW AND ROKA, GOT")
 			print("ATTEMPTING TO STAND FARM")
-			dontTPOnDeath = true
+			dontTPOnDeath = false
 			attemptStandFarm()
 		else
 			Teleport()
@@ -905,7 +906,7 @@ game.Workspace.Living.ChildAdded:Connect(function(character)
 		if LocalPlayer.PlayerStats.Level.Value == 50 then
 			print("didnt reconnect")
 		else
-			if getgenv().dontTPOnDeath then
+			if dontTPOnDeath then
 				Teleport()
 			else
 				attemptStandFarm()
