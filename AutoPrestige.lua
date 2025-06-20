@@ -1,4 +1,4 @@
-getgenv().standList =  {
+getgenv().standList = getgenv().standList or {
 	["The World"] = true,
 	["Star Platinum"] = true,
 	["Star Platinum: The World"] = true,
@@ -6,12 +6,13 @@ getgenv().standList =  {
 	["King Crimson"] = true,
 	["King Crimson Requiem"] = true
 }
-getgenv().waitUntilCollect = 0.5 --Change this if ur getting kicked a lot
-getgenv().sortOrder = "Asc" --desc for less players, asc for more
-getgenv().lessPing = false --turn this on if u want lower ping servers, cant guarantee you will see same people using script, and data error 1
-getgenv().autoRequiem = true --turn this on for auto requiem
-getgenv().NPCTimeOut = 15 --timeout for npc not spawning
-getgenv().HamonCharge = 90 --change if u want to charge hamon after every kill (around 90)
+
+getgenv().waitUntilCollect = getgenv().waitUntilCollect or 0.5
+getgenv().sortOrder = getgenv().sortOrder or "Asc"
+getgenv().lessPing = getgenv().lessPing or false
+getgenv().autoRequiem = getgenv().autoRequiem or true
+getgenv().NPCTimeOut = getgenv().NPCTimeOut or 15
+getgenv().HamonCharge = getgenv().HamonCharge or 90
 
 game:GetService("CoreGui").DescendantAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" then
