@@ -849,16 +849,43 @@ local function autoStory()
 			autoStory()
 		end
 	elseif LocalPlayer.PlayerStats.Level.Value == 50 then
-		if Character:FindFirstChild("FocusCam") then
-			Character.FocusCam:Destroy()
+    if Character:FindFirstChild("FocusCam") then
+        Character.FocusCam:Destroy()
+    end
 
-			pcall(function()
-				delfile("AutoPres3_"..LocalPlayer.Name..".txt")
-			end)
-		end
+    local storyLineCosmetics = {
+        ["Narancia's Hair"] = true,
+        ["Trish's Hair"] = true,
+        ["Mista's Hat"] = true,
+        ["Giorno's Hair"] = true,
+        ["FugoHair"] = true,
+        ["Abbacchio's Hair"] = true,
+        ["Diavolo's Hair"] = true
+    }
 
+    local scrollingFrame = LocalPlayer.PlayerGui.HUD.Main.Frames.Cosmetics.Frame.ScrollingFrame
 
+    for _, v in ipairs(scrollingFrame:GetChildren()) do
+        if storyLineCosmetics[v.Name] then
+            v:Destroy()
+        else
+            local quantity = v:GetAttribute("Quantity")
+            if quantity and typeof(quantity) == "number" then
+                for i = 1, quantity do
+                    local args = {
+                        "RemoveCosmetic",
+                        tostring(v)
+                    }
+                    Character:WaitForChild("RemoteEvent"):FireServer(unpack(args))
+                end
+            end
+        end
+    end
 
+    pcall(function()
+        delfile("AutoPres3_"..LocalPlayer.Name..".txt")
+    end)
+end
 	elseif questPanel:FindFirstChild("Take down 3 vampires") and LocalPlayer.PlayerStats.Spec.Value ~= "None" and LocalPlayer.PlayerStats.Level.Value >= 25 and LocalPlayer.PlayerStats.Level.Value ~= 50 then
 		getgenv().HamonCharge = 10
 		local function vampire()
