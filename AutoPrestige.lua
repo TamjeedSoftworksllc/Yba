@@ -858,7 +858,7 @@ local function autoStory()
         ["Trish's Hair"] = true,
         ["Mista's Hat"] = true,
         ["Giorno's Hair"] = true,
-        ["FugoHair"] = true,
+        ["Fugo's Hair"] = true,
         ["Abbacchio's Hair"] = true,
         ["Diavolo's Hair"] = true
     }
