@@ -13,7 +13,7 @@ getgenv().lessPing = getgenv().lessPing or false
 getgenv().autoRequiem = getgenv().autoRequiem or true
 getgenv().NPCTimeOut = getgenv().NPCTimeOut or 15
 getgenv().HamonCharge = getgenv().HamonCharge or 90
-
+getgenv().Webhook = getgenv().Webhook or ""
 game:GetService("CoreGui").DescendantAdded:Connect(function(child)
 	if child.Name == "ErrorPrompt" then
 		local GrabError = child:FindFirstChild("ErrorMessage",true)
@@ -301,7 +301,7 @@ local function countItems(itemName)
 
 	for _,item in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
 		if item.Name == itemName then
-			itemAmount += 1;
+			itemAmount = itemAmount + 1;
 		end
 	end
 
@@ -885,7 +885,6 @@ local function autoStory()
     pcall(function()
         delfile("AutoPres3_"..LocalPlayer.Name..".txt")
     end)
-end
 	elseif questPanel:FindFirstChild("Take down 3 vampires") and LocalPlayer.PlayerStats.Spec.Value ~= "None" and LocalPlayer.PlayerStats.Level.Value >= 25 and LocalPlayer.PlayerStats.Level.Value ~= 50 then
 		getgenv().HamonCharge = 10
 		local function vampire()
