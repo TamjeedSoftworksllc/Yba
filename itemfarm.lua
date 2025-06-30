@@ -249,7 +249,7 @@ local function countItems(itemName)
 
 	for _,item in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
 		if item.Name == itemName then
-			itemAmount += 1;
+			itemAmount = itemAmount + 1;
 		end
 	end
 
@@ -371,28 +371,28 @@ hookfunction(workspace.Raycast, function() -- noclip bypass
 end)
 task.spawn(function()
 	while true do
-		for i,v in game.Players:GetPlayers() do 
-			if v:IsInGroup(3194064) then
+		for _, player in ipairs(game.Players:GetPlayers()) do
+			if player:IsInGroup(3194064) then
 				SendWebhook({
-					Description = "Player in game thats in YBA's group, Serverhopping",
+					Description = "Player in game that's in YBA's group, Serverhopping",
 				})
 				Teleport()
 			end
 		end
-			CollectItem("Mysterious Arrow", 25)
-			CollectItem("Rokakaka", 25)
-			CollectItem("Stone Mask")
-			CollectItem("Zeppeli's Hat",10)
-			CollectItem("Dio's Diary",10)
-			CollectItem("Diamond", 10)
-			CollectItem("Steel Ball", 10)
-			CollectItem("Quinton's Glove", 10)
-			CollectItem("Pure Rokakaka", 10)
-			CollectItem("Ribcage Of The Saint's Corpse", 10)
-			CollectItem("Ancient Scroll", 10)
-			CollectItem("Clackers", 10)
-			CollectItem("Caesar's headband", 10)
-		end
+
+		CollectItem("Mysterious Arrow", 25)
+		CollectItem("Rokakaka", 25)
+		CollectItem("Stone Mask")
+		CollectItem("Zeppeli's Hat", 10)
+		CollectItem("Dio's Diary", 10)
+		CollectItem("Diamond", 10)
+		CollectItem("Steel Ball", 10)
+		CollectItem("Quinton's Glove", 10)
+		CollectItem("Pure Rokakaka", 10)
+		CollectItem("Ribcage Of The Saint's Corpse", 10)
+		CollectItem("Ancient Scroll", 10)
+		CollectItem("Clackers", 10)
+		CollectItem("Caesar's headband", 10)
 
 		if tick() - lastItemFoundTick >= 10 then
 			SendWebhook({
