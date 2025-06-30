@@ -348,10 +348,10 @@ local function endDialogue(NPC, Dialogue, Option)
 	}
 	RemoteEvent:FireServer("EndDialogue", dialogueToEnd)
 end
-local function collectAndSell(toolName, amount)
+local function CollectItem(toolName, amount)
 	farmItem(toolName, amount)
-	LocalPlayer.Character.Humanoid:EquipTool(LocalPlayer.Backpack:FindFirstChild(toolName))
-	endDialogue("Merchant", "Dialogue5", "Option2")
+	-- LocalPlayer.Character.Humanoid:EquipTool(LocalPlayer.Backpack:FindFirstChild(toolName))
+	-- endDialogue("Merchant", "Dialogue5", "Option2")
 end
 LocalPlayer.PlayerStats.Level:GetPropertyChangedSignal("Value"):Connect(function()
 
@@ -369,38 +369,6 @@ end)
 hookfunction(workspace.Raycast, function() -- noclip bypass
 	return
 end)
-function buylucky()
-	local backpack = game:GetService("Players").LocalPlayer.Backpack
-	local luckyCount = 0
-
-	for _, item in ipairs(backpack:GetChildren()) do
-		if item.Name == "Lucky Arrow" then
-			luckyCount += 1
-		end
-	end
-
-	if luckyCount >= 10 then
-		SendWebhook({
-			Description = "Max Lucky Arrows achieved (10). Kicking player...",
-		})
-		game.Players.LocalPlayer:Kick("Max Lucky Arrows achieved (10)")
-		return
-	end
-
-	SendWebhook({
-		Description = "Bought Lucky Arrow",
-	})
-
-	local args = {
-		"PurchaseShopItem",
-		{
-			ItemName = "1x Lucky Arrow"
-		}
-	}
-	game:GetService("Players").LocalPlayer.Character:WaitForChild("RemoteEvent"):FireServer(unpack(args))
-end
-
-
 task.spawn(function()
 	while true do
 		for i,v in game.Players:GetPlayers() do 
@@ -411,28 +379,19 @@ task.spawn(function()
 				Teleport()
 			end
 		end
-		local money = LocalPlayer.PlayerStats.Money.Value
-
-		if money >= 50000 then
-			local timesToBuy = math.floor(money / 50000)
-			for i = 1, timesToBuy do
-				buylucky()
-				task.wait(0.2)
-			end
-		else
-			collectAndSell("Mysterious Arrow", 25)
-			collectAndSell("Rokakaka", 25)
-			collectAndSell("Stone Mask")
-			collectAndSell("Zeppeli's Hat",10)
-			collectAndSell("Dio's Diary",10)
-			collectAndSell("Diamond", 10)
-			collectAndSell("Steel Ball", 10)
-			collectAndSell("Quinton's Glove", 10)
-			collectAndSell("Pure Rokakaka", 10)
-			collectAndSell("Ribcage Of The Saint's Corpse", 10)
-			collectAndSell("Ancient Scroll", 10)
-			collectAndSell("Clackers", 10)
-			collectAndSell("Caesar's headband", 10)
+			CollectItem("Mysterious Arrow", 25)
+			CollectItem("Rokakaka", 25)
+			CollectItem("Stone Mask")
+			CollectItem("Zeppeli's Hat",10)
+			CollectItem("Dio's Diary",10)
+			CollectItem("Diamond", 10)
+			CollectItem("Steel Ball", 10)
+			CollectItem("Quinton's Glove", 10)
+			CollectItem("Pure Rokakaka", 10)
+			CollectItem("Ribcage Of The Saint's Corpse", 10)
+			CollectItem("Ancient Scroll", 10)
+			CollectItem("Clackers", 10)
+			CollectItem("Caesar's headband", 10)
 		end
 
 		if tick() - lastItemFoundTick >= 10 then
