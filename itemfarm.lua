@@ -1,5 +1,5 @@
-getgenv().waitUntilCollect = 0.2 --Change this if ur getting kicked a lot
-getgenv().sortOrder = "Asc" --desc for less players, asc for more
+getgenv().waitUntilCollect = 0.2 --Change this if ur getting kicked a lo
+ itemAmount +getgenv().sortOrder = "Asc" --desc for less players, asc for more
 getgenv().lessPing = false --turn this on if u want lower ping servers, cant guarantee you will see same people using script, and data error 1
 getgenv().Webhook = "" 
 game:GetService("CoreGui").DescendantAdded:Connect(function(child)
@@ -371,28 +371,28 @@ hookfunction(workspace.Raycast, function() -- noclip bypass
 end)
 task.spawn(function()
 	while true do
-		for _, player in ipairs(game.Players:GetPlayers()) do
-			if player:IsInGroup(3194064) then
+		for i,v in game.Players:GetPlayers() do 
+			if v:IsInGroup(3194064) then
 				SendWebhook({
-					Description = "Player in game that's in YBA's group, Serverhopping",
+					Description = "Player in game thats in YBA's group, Serverhopping",
 				})
 				Teleport()
 			end
 		end
-
-		CollectItem("Mysterious Arrow", 25)
-		CollectItem("Rokakaka", 25)
-		CollectItem("Stone Mask")
-		CollectItem("Zeppeli's Hat", 10)
-		CollectItem("Dio's Diary", 10)
-		CollectItem("Diamond", 10)
-		CollectItem("Steel Ball", 10)
-		CollectItem("Quinton's Glove", 10)
-		CollectItem("Pure Rokakaka", 10)
-		CollectItem("Ribcage Of The Saint's Corpse", 10)
-		CollectItem("Ancient Scroll", 10)
-		CollectItem("Clackers", 10)
-		CollectItem("Caesar's headband", 10)
+			CollectItem("Mysterious Arrow", 25)
+			CollectItem("Rokakaka", 25)
+			CollectItem("Stone Mask")
+			CollectItem("Zeppeli's Hat",10)
+			CollectItem("Dio's Diary",10)
+			CollectItem("Diamond", 10)
+			CollectItem("Steel Ball", 10)
+			CollectItem("Quinton's Glove", 10)
+			CollectItem("Pure Rokakaka", 10)
+			CollectItem("Ribcage Of The Saint's Corpse", 10)
+			CollectItem("Ancient Scroll", 10)
+			CollectItem("Clackers", 10)
+			CollectItem("Caesar's headband", 10)
+		end
 
 		if tick() - lastItemFoundTick >= 10 then
 			SendWebhook({
